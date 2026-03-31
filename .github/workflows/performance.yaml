@@ -84,7 +84,7 @@ jobs:
       
   call_reusable:
     needs: get_config
-    uses: Muhamed-Husic/mock-migraphx/.github/workflows/perf-test.yml@main
+    uses: Muhamed-Husic/mock-migraphx/.github/workflows/perf-test.yaml@main
     with:
       rocm_release: ${{ needs.get_config.outputs.rocm_version }}
       # benchmark_utils_repo: ${{ github.event.inputs.benchmark_utils_repo || needs.get_config.outputs.utils_repo }}
