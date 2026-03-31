@@ -2,7 +2,7 @@ name: Performance Tests
 
 on:
   pull_request_target:
-    branches: [develop]
+    branches: [main]
     types: [opened, synchronize, closed]
   schedule:
     - cron: "0 7 * * 1-6"
