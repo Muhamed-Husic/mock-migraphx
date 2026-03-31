@@ -2,7 +2,7 @@ name: Performance Tests
 
 on:
   pull_request_target:
-    branches: [develop]
+    branches: [main]
     types: [opened, synchronize, closed]
   schedule:
     - cron: "0 7 * * 1-6"
@@ -84,7 +84,7 @@ jobs:
       
   call_reusable:
     needs: get_config
-    uses: ./.github/workflows/perf-test.yml
+    uses: Muhamed-Husic/mock-migraphx/.github/workflows/perf-test.yml@main
     with:
       rocm_release: ${{ needs.get_config.outputs.rocm_version }}
       # benchmark_utils_repo: ${{ github.event.inputs.benchmark_utils_repo || needs.get_config.outputs.utils_repo }}
