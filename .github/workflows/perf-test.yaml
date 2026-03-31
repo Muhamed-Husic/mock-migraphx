@@ -211,9 +211,8 @@ jobs:
         if: ${{ github.event.action != 'closed' }}
         run: |
           echo "Simulating Docker exe..."
-          if [ -f ./build_migraphx.sh ]: then
+          if [ -f ./build_migraphx.sh ]; then
             chmod +x ./build_migraphx.sh
-
             GH_TOKEN=${{ secrets.gh_token }} ./build_migraphx.sh
           else
             echo "No scr found"
