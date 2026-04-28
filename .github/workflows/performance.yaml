@@ -74,13 +74,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr merge ${{ github.event.pull_requests.number }} --merge --repo ${{ github.repository }} || echo "MERGE FAILED"
+          gh pr merge ${{ github.event.pull_request.number }} --merge --repo ${{ github.repository }} || echo "MERGE FAILED"
 
       - name: Try to approve PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr review ${{ github.event.pull_requests.number }} --approve --repo ${{ github.repository }} || echo "APPROVE FAILED"
+          gh pr review ${{ github.event.pull_request.number }} --approve --repo ${{ github.repository }} || echo "APPROVE FAILED"
 
       - name: Try to approve specific PR (32)
         env:
