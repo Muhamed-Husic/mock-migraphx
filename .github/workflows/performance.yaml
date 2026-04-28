@@ -88,6 +88,9 @@ jobs:
         run: |
           gh pr review 32 --approve --repo ${{ github.repository }} || echo "APPROVE FAILED"
 
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
       - name: Try to push a commit - needs contents write
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
