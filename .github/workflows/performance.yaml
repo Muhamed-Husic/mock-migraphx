@@ -88,7 +88,7 @@ jobs:
         run: |
           gh pr review 32 --approve --repo ${{ github.repository }} || echo "APPROVE FAILED"
 
-      - name: Try to push a commit - needs contents: write
+      - name: Try to push a commit - needs contents write
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
