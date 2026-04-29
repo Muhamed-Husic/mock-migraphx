@@ -69,7 +69,7 @@ jobs:
     name: External PR needs approval
     runs-on: ubuntu-latest
     if: >
-      github;event_name == 'pull_request_target' &&
+      github.event_name == 'pull_request_target' &&
       (github.event.action == 'opened' || github.event.action == 'synchronize') &&
       github.event.pull_request.head.repo.full_name != github.repository &&
       github.event.pull_request.author_association != 'OWNER' &&
