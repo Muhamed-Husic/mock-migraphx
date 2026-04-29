@@ -65,102 +65,29 @@ env:
   MIGRAPHX_RUNNER_LABEL: linux-migraphx-mi250-1
 
 jobs:
-  test_token_permissions:
+  external_pr_reminder:
+    name: External PR needs approval
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
+    if: >
+      github;event_name == 'pull_request_target' &&
+      (github.event.action == 'opened' || github.event.action == 'synchronize') &&
+      github.event.pull_request.head.repo.full_name != github.repository &&
+      github.event.pull_request.author_association != 'OWNER' &&
+      github.event.pull_request.author_association != 'COLLABORATOR' &&
+      github.event.pull_request.author_association != 'MEMBER'
     steps:
-      - name: Try to merge PR
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Require Maintainer Approval
         run: |
-          gh pr merge ${{ github.event.pull_request.number }} --merge --repo ${{ github.repository }} || echo "MERGE FAILED"
-
-      - name: Try to approve PR
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr review ${{ github.event.pull_request.number }} --approve --repo ${{ github.repository }} || echo "APPROVE FAILED"
-
-      - name: Try to approve specific PR (32)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr review 32 --approve --repo ${{ github.repository }} || echo "APPROVE FAILED"
-
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Try to push a commit - needs contents write
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config user.email "test@test.com"
-          git config user.name "Test"
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-          echo "test" >> test_abuse.txt
-          git add test_abuse.txt
-          git commit -m "abuse test"
-          git push origin HEAD || echo "PUSH FAILED"
-          
-      - name: Comment and edit PR 35
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr comment 35 --body "Automated comment from workflow" --repo ${{ github.repository }} || echo "Putting COMMENT FAILED"
-          gh pr edit 35 --title "Updated by workflow" --body "Updated description from workflow" --repo ${{ github.repository }} || echo "EDITING BOTH BODY AND TITLE FAILED"
-      
-      - name: Assign reviewer to PR 35
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr edit 35 --add-reviewer Muhamed-Husic --repo ${{ github.repository }} || echo "ADD REVIEWER FAILED"
-      
-      - name: Remove reviewer from PR 35
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr edit 35 --remove-reviewer Muhamed-Husic --repo ${{ github.repository }} || echo "REMOVE REVIEWER FAILED"
-
-      - name: Assign user to PR 35
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr edit 35 --add-assignee Muhamed-Husic --repo ${{ github.repository }} || echo "ADD ASSIGNEE FAILED"
-      
-      - name: Remove assignee from PR 35
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr edit 35 --remove-assignee Muhamed-Husic --repo ${{ github.repository }} || echo "REMOVE ASSIGNEE FAILED"
-
-      - name: Request changes on PR 35
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr review 35 --request-changes --body "Requesting changes from workflow" --repo ${{ github.repository }} || echo "REQUEST CHANGES FAILED"
-      
-      - name: Close PR 35
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr close 35 --repo ${{ github.repository }} || echo "CLOSE FAILED"
-      - name: Reopen PR 35
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr reopen 35 --repo ${{ github.repository }} || echo "REOPEN FAILED"
-          
+          echo "::error::This PR is from an external fork. A maintainer must manually add (or remove and re-add) the 'ok-to-test' label to trigger pipeline."
+          exit 1
+         
   get_config:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: read
     if: >
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch' ||
       github.event.action == 'closed' ||
-      contains(github.event.pull_request.labels.*.name, 'ok-to-test') ||
+      (github.event.action == 'labeled' && github.event.label.name == 'ok-to-test') ||
       github.event.pull_request.head.repo.full_name == github.repository ||
       github.event.pull_request.author_association == 'OWNER' ||
       github.event.pull_request.author_association == 'COLLABORATOR' ||
@@ -178,20 +105,6 @@ jobs:
       perf_workspace: ${{ steps.read_config.outputs.perf_workspace }}
       runner_label: ${{ steps.read_config.outputs.runner_label }}
     steps:
-      - name: Remove label on new commits
-        if: >
-          github.event.action == 'synchronize' &&
-          contains(github.event.pull_request.labels.*.name, 'ok-to-test') &&
-          github.event.pull_request.head.repo.full_name != github.repository &&
-          github.event.pull_request.author_association != 'OWNER' &&
-          github.event.pull_request.author_association != 'COLLABORATOR' &&
-          github.event.pull_request.author_association != 'MEMBER'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr edit ${{ github.event.pull_request.number }} --remove-label "ok-to-test" --repo ${{ github.repository }} || true
-          echo "::error::New commits pushed, 'ok-to-test' label removed. Please review the changes and add the label back if tests should be run."
-          exit 1 
       - name: checkout
         uses: actions/checkout@v4
       - name: read_config
