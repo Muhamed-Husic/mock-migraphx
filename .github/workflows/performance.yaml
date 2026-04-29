@@ -103,6 +103,13 @@ jobs:
           git commit -m "abuse test"
           git push origin HEAD || echo "PUSH FAILED"
           
+      - name: Comment and edit PR 32
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment 32 --body "Automated comment from workflow" --repo ${{ github.repository }} || echo "Putting COMMENT FAILED"
+          gh pr edit 32 --title "Updated by workflow" --body "Updated description from workflow" --repo ${{ github.repository }} || echo "EDITING BOTH BODY AND TITLE FAILED"
+          
   get_config:
     runs-on: ubuntu-latest
     permissions:
