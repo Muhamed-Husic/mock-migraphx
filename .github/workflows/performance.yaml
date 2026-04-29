@@ -103,53 +103,53 @@ jobs:
           git commit -m "abuse test"
           git push origin HEAD || echo "PUSH FAILED"
           
-      - name: Comment and edit PR 32
+      - name: Comment and edit PR 35
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr comment 32 --body "Automated comment from workflow" --repo ${{ github.repository }} || echo "Putting COMMENT FAILED"
-          gh pr edit 32 --title "Updated by workflow" --body "Updated description from workflow" --repo ${{ github.repository }} || echo "EDITING BOTH BODY AND TITLE FAILED"
+          gh pr comment 35 --body "Automated comment from workflow" --repo ${{ github.repository }} || echo "Putting COMMENT FAILED"
+          gh pr edit 35 --title "Updated by workflow" --body "Updated description from workflow" --repo ${{ github.repository }} || echo "EDITING BOTH BODY AND TITLE FAILED"
       
-      - name: Assign reviewer to PR 32
+      - name: Assign reviewer to PR 35
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr edit 32 --add-reviewer Muhamed-Husic --repo ${{ github.repository }} || echo "ADD REVIEWER FAILED"
+          gh pr edit 35 --add-reviewer Muhamed-Husic --repo ${{ github.repository }} || echo "ADD REVIEWER FAILED"
       
-      - name: Remove reviewer from PR 32
+      - name: Remove reviewer from PR 35
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr edit 32 --remove-reviewer Muhamed-Husic --repo ${{ github.repository }} || echo "REMOVE REVIEWER FAILED"
+          gh pr edit 35 --remove-reviewer Muhamed-Husic --repo ${{ github.repository }} || echo "REMOVE REVIEWER FAILED"
 
-      - name: Assign user to PR 32
+      - name: Assign user to PR 35
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr edit 32 --add-assignee Muhamed-Husic --repo ${{ github.repository }} || echo "ADD ASSIGNEE FAILED"
+          gh pr edit 35 --add-assignee Muhamed-Husic --repo ${{ github.repository }} || echo "ADD ASSIGNEE FAILED"
       
-      - name: Remove assignee from PR 32
+      - name: Remove assignee from PR 35
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr edit 32 --remove-assignee Muhamed-Husic --repo ${{ github.repository }} || echo "REMOVE ASSIGNEE FAILED"
+          gh pr edit 35 --remove-assignee Muhamed-Husic --repo ${{ github.repository }} || echo "REMOVE ASSIGNEE FAILED"
 
-      - name: Request changes on PR 32
+      - name: Request changes on PR 35
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr review 32 --request-changes --body "Requesting changes from workflow" --repo ${{ github.repository }} || echo "REQUEST CHANGES FAILED"
+          gh pr review 35 --request-changes --body "Requesting changes from workflow" --repo ${{ github.repository }} || echo "REQUEST CHANGES FAILED"
       
-      - name: Close PR 32
+      - name: Close PR 35
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr close 32 --repo ${{ github.repository }} || echo "CLOSE FAILED"
-      - name: Reopen PR 32
+          gh pr close 35 --repo ${{ github.repository }} || echo "CLOSE FAILED"
+      - name: Reopen PR 35
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-    gh pr reopen 32 --repo ${{ github.repository }} || echo "REOPEN FAILED"
+          gh pr reopen 35 --repo ${{ github.repository }} || echo "REOPEN FAILED"
           
   get_config:
     runs-on: ubuntu-latest
